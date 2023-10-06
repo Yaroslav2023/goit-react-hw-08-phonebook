@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
-export const Layout = () => {
+const Layout = () => {
   return (
     <div>
       <h1>Phonebook</h1>
@@ -11,3 +11,5 @@ export const Layout = () => {
     </div>
   );
 };
+
+export default Layout;

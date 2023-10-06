@@ -1,47 +1,49 @@
 import React, { useState } from 'react';
-import cl from './contactForm.module.css';
-import { useDispatch } from 'react-redux';
-import { addContact } from '../../redux/API/contactsApi';
 import { nanoid } from 'nanoid';
+import {
+  useAddContactMutation,
+  useGetContactsQuery,
+} from 'redux/API/contactsApi';
+import Notiflix from 'notiflix';
+import cl from './contactForm.module.css';
 
 const ContactForm = () => {
+  const [addContact] = useAddContactMutation();
+  const { data: contacts } = useGetContactsQuery();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const dispatch = useDispatch();
 
-  const handleSubmitForm = e => {
-    e.preventDefault();
-    const name = e.target.name.value;
-    const number = e.target.number.value;
-    dispatch(addContact({ id: nanoid(), name, number }));
+  const handleInputChange = event => {
+    const { name, value } = event.currentTarget;
+    name === 'name' ? setName(value) : setNumber(value);
+  };
+
+  const handleFormSubmit = evt => {
+    evt.preventDefault();
+    const contact = { id: nanoid(), name, number };
+    const normalizedFind = name.toLocaleLowerCase();
+    contacts.find(
+      contact => contact.name.toLocaleLowerCase() === normalizedFind
+    )
+      ? Notiflix.Notify.warning(`${name} is already in contacts!`)
+      : addContact(contact);
+    reset();
+  };
+
+  const reset = () => {
     setName('');
     setNumber('');
   };
 
-  const handleChangeInput = ({ target }) => {
-    const { name, value } = target;
-
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-      case 'number':
-        setNumber(value);
-        break;
-      default:
-        return;
-    }
-  };
-
   return (
-    <form className={cl.form} onSubmit={handleSubmitForm}>
+    <form className={cl.form} onSubmit={handleFormSubmit}>
       <label className={cl.inputItem}>
         Name <br />
         <input
           type="text"
           name="name"
           value={name}
-          onChange={handleChangeInput}
+          onChange={handleInputChange}
           pattern="^[a-zA-Zа-яА-ЯІіЇїҐґ' \-\u0400-\u04FF]+$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
@@ -54,7 +56,7 @@ const ContactForm = () => {
           type="tel"
           name="number"
           value={number}
-          onChange={handleChangeInput}
+          onChange={handleInputChange}
           pattern="^[+]?[0-9\\.\\-\\s]{1,15}$"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           placeholder="123-45-67"

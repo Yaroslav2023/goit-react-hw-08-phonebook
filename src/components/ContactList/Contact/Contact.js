@@ -1,15 +1,15 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from '../../../redux/API/contactsApi';
-import { selectContacts } from 'redux/contactSlice';
-import { selectFilterContacts } from 'redux/selectors';
+import { useSelector } from 'react-redux';
+import {
+  useDeleteContactMutation,
+  useGetContactsQuery,
+} from 'redux/API/contactsApi';
 import cl from './contact.module.css';
 
 const Contact = () => {
-  const { items, isLoading, error } = useSelector(selectContacts);
-  const { filter } = useSelector(selectFilterContacts);
-  const dispatch = useDispatch();
-
-  const onDelete = id => dispatch(deleteContact(id));
+  const token = useSelector(state => state.auth.token);
+  const { data: contacts, isLoading, error } = useGetContactsQuery(token);
+  const { filter } = useSelector(state => state.filter);
+  const [deleteContact] = useDeleteContactMutation();
 
   if (isLoading && !error) {
     return (
@@ -18,7 +18,6 @@ const Contact = () => {
       </div>
     );
   }
-
   if (error) {
     return (
       <div>
@@ -28,31 +27,29 @@ const Contact = () => {
     );
   }
 
-  let arrayContacts = [];
-  if (filter === '') {
-    arrayContacts = items;
-  } else {
-    const normalizedFilter = filter.toLocaleLowerCase();
-    arrayContacts = items.filter(contact =>
-      contact.name.toLocaleLowerCase().includes(normalizedFilter)
+  const getFilteredContacts = () => {
+    return (contacts || []).filter(contact =>
+      contact.name.toLowerCase().includes(filter)
     );
-  }
+  };
+
+  const filteredContacts = getFilteredContacts();
 
   return (
-    <div>
-      {arrayContacts.map(el => (
-        <li key={el.id} className={cl.item}>
-          {el.name} {el.number}
+    <>
+      {filteredContacts.map(({ id, name, number }) => (
+        <li key={id} className={cl.item}>
+          {name}: {number}
           <button
             className={cl.btn}
-            name="delete"
-            onClick={() => onDelete(el.id)}
+            type="button"
+            onClick={() => deleteContact(id)}
           >
             Delete
           </button>
         </li>
       ))}
-    </div>
+    </>
   );
 };
 
