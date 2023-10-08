@@ -29,7 +29,7 @@ const Contact = () => {
 
   const getFilteredContacts = () => {
     return (contacts || []).filter(contact =>
-      contact.name.toLowerCase().includes(filter)
+      contact.name.toLowerCase().includes(filter.toLowerCase())
     );
   };
 

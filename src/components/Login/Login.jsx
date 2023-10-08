@@ -3,14 +3,16 @@ import { useDispatch } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useLoginMutation } from 'redux/auth';
 import { setToken } from 'redux/auth/authSlice';
+import cl from './login.module.css';
+import Notiflix from 'notiflix';
 
 const INITIAL_STATE = {
   email: '',
   password: '',
 };
 
-const Login = () => {
-  const [formData, setFormData] = useState({ ...INITIAL_STATE });
+const Login = evt => {
+  const [formData, setFormData] = useState({ ...evt });
   const [login] = useLoginMutation();
 
   const dispatch = useDispatch();
@@ -24,11 +26,12 @@ const Login = () => {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    const { data } = await login(formData);
-
-    if (data) {
+    try {
+      const { data } = await login(formData);
       dispatch(setToken(data.token));
       navigate('/');
+    } catch (error) {
+      Notiflix.Notify.warning(`Invalid login or password`);
     }
 
     reset();
@@ -39,24 +42,26 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h2>Sign in to your account</h2>
-        <label>Email</label>
+    <div className={cl.login}>
+      <form onSubmit={handleSubmit} className={cl.form}>
+        <h2 className={cl.text}>Sign in to your account</h2>
+        <label>Email:</label>
         <input
           type="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
+          placeholder="123@test.ua"
           required
         />
-        <label>Password</label>
+        <label>Password:</label>
         <input
           type="password"
           name="password"
           value={formData.password}
           onChange={handleChange}
           autoComplete="current-password"
+          placeholder="password..."
           required
         />
         <button type="submit">Sign in</button>

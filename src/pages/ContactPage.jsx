@@ -9,7 +9,7 @@ const ContactPage = () => {
     <div>
       <UserMenu />
       <ContactForm />
-      <h2>Contacts</h2>
+
       <Filter />
       <ContactList />
     </div>

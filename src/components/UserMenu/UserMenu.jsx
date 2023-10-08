@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useGetCurrentUserQuery } from 'redux/auth';
 import { logOut } from 'redux/auth/authSlice';
+import cl from './userMenu.module.css';
 
 function UserMenu() {
   const dispatch = useDispatch();
@@ -16,8 +17,11 @@ function UserMenu() {
   };
 
   return (
-    <div>
-      <p>Welcome {isLoading ? 'Your name ...' : <span>{data.name}</span>}</p>
+    <div className={cl.item}>
+      <h2 className={cl.text}>Phonebook</h2>
+      <p className={cl.email}>
+        Welcome {isLoading ? 'Your name ...' : <span>{data.email}</span>}
+      </p>
       <button type="button" onClick={handleLogOut}>
         Logout
       </button>

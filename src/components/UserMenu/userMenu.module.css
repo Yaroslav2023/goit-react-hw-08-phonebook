@@ -1,0 +1,15 @@
+.item {
+    display: flex;
+    align-items: center;
+    background-color: yellowgreen;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.text {
+    margin-right: auto;
+}
+
+.email {
+    margin-right: 40px;
+}

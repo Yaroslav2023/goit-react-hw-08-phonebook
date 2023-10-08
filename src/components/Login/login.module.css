@@ -1,0 +1,19 @@
+.login {
+
+    width: 400px;
+    margin-top: 40px;
+    margin-right: auto;
+    margin-left: auto;
+
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+}
+
+.text {
+    color: blue;
+    text-align: center;
+}
